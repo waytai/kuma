@@ -390,7 +390,8 @@ def document(request, document_slug, document_locale):
             'related': related, 'contributors': contributors,
             'fallback_reason': fallback_reason,
             'kumascript_errors': ks_errors,
-            'render_raw_fallback': render_raw_fallback}
+            'render_raw_fallback': render_raw_fallback,
+            'attachment_form': AttachmentRevisionForm()}
     data.update(SHOWFOR_DATA)
 
     response = jingo.render(request, 'wiki/document.html', data)
@@ -1519,6 +1520,9 @@ def attachment_history(request, attachment_id):
 
 @login_required
 def new_attachment(request):
+
+    logging.debug('Hit!')
+
     """Create a new Attachment object and populate its initial
     revision."""
     if request.method == 'POST':
@@ -1531,7 +1535,10 @@ def new_attachment(request):
             rev.attachment = attachment
             rev.save()
             return HttpResponseRedirect(attachment.get_absolute_url())
-    form = AttachmentRevisionForm()
+        else:
+            logging.debug('Invalid form!')
+    else:
+        form = AttachmentRevisionForm()
     return jingo.render(request, 'wiki/new_attachment.html',
                         {'form': form})
 

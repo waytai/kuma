@@ -1062,10 +1062,10 @@
             $attachmentsCount = $("#page-attachments-count"),
             $attachmentsButton = $("#page-attachments-button"),
             $attachmentsNoMessage = $("#page-attachments-no-message"),
+            $attachmentsNewTable = $("#page-attachments-new-table"),
+            $attachmentsForm = $("#page-attachments-form"),
+            $attachmentsNewFile = $("#page-attachments-new-file"),
             attachmentsModalContent = "",
-            modalOptions = {
-                minWidth: "600px"
-            },
             loading = false;
 
         // If not table, get out
@@ -1073,23 +1073,15 @@
             return;
         }
 
+        // Add the CSRF ?
+        //$("#csrfmiddlewaretoken").clone().appendTo($attachmentsForm);
+
         // Create a Kbox modal
         $attachmentsButton.bind("click", function(e) {
             e.preventDefault();
-
-            if(attachmentsModalContent) {
-                $.modal(attachmentsModalContent, modalOptions);
-            }
-            else {
-                if(loading) {
-                    return;
-                }
-
-                loading = true;
-                $.get($attachmentsButton.attr("data-modal-url"), {}, function(attachmentsModalContent) {
-                    loading = false;
-                    $.modal(attachmentsModalContent, modalOptions);
-                });
+            $attachmentsNewTable.toggleClass("hidden");
+            if($attachmentsNewTable.hasClass("hidden")) {
+                $attachmentsNewFile[0].focus();
             }
         });
 

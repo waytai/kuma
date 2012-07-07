@@ -239,6 +239,9 @@
             <a href="/" class="modal" id="page-attachments-button" data-modal-url="{{ url('wiki.attachment_modal') }}">Attach Files</a>
           </p>
 
+          <p id="page-attachments-no-message" class="{% if attachments|length %}hidden{% endif %}">
+            {{ _('This document has no attachments.') }}
+          </p>
           <table cellpadding="0" cellspacing="0" id="page-attachments-table" class="{% if not attachments|length %}hidden{% endif %}">
             <thead>
               <th>{{ _('File') }}</th>
@@ -264,10 +267,17 @@
               {% endfor %}
             </tbody>
           </table>
-          
-          <p id="page-attachments-no-message" class="{% if attachments|length %}hidden{% endif %}">
-            {{ _('This document has no attachments.') }}
-          </p>
+
+          <form method="post" action="{{ url('wiki.new_attachment') }}" id="page-attachments-form" enctype="multipart/form-data">
+          <table cellpadding="0" cellspacing="0" id="page-attachments-new-table" class="hidden">
+            <tbody>
+              <td>{{ attachment_form.file | safe }}</td>
+              <td>{{ attachment_form.title | safe }}</td>
+              <td>{{ attachment_form.description | safe }}</td>
+              <td>{{ attachment_form.comment | safe }}</td>
+              <td><input type="submit" name="submit" value="Upload" /></td>
+            </tbody>
+          </table>
         </section>
 
 
