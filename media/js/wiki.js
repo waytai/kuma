@@ -21,17 +21,14 @@
         initDetailsTags();
 
         if ($body.is('.document') || $body.is('.home')) {  // Document page
-            //initForTags();
-            //updateShowforSelectors();
             initHelpfulVote();
             initSectionEditing();
         } else if ($body.is('.review')) { // Review pages
-            //initForTags();
-            //updateShowforSelectors();
             initApproveReject();
         }
         if ($body.is('.document')){
             initSyntaxHighlighter();
+            initAttachmentsActions();
         }
 
         if ($body.is('.home')) {
@@ -42,8 +39,6 @@
             initMetadataEditButton();
             initSaveAndEditButtons();
             initArticlePreview();
-            // initTitleAndSlugCheck();
-            // initDrafting();
         }
         if ($body.is('.edit.is-template') ||
                 $body.is('.new.is-template')) {
@@ -1060,6 +1055,57 @@
             approveModal.hide();
         });
         rejectModal.hide();
+    }
+
+    function initAttachmentsActions() {
+        var $attachmentsTable = $("#page-attachments-table"),
+            $attachmentsCount = $("#page-attachments-count"),
+            $attachmentsButton = $("#page-attachments-button"),
+            $attachmentsNoMessage = $("#page-attachments-no-message"),
+            attachmentsModalContent = "",
+            modalOptions = {
+                minWidth: "600px"
+            },
+            loading = false;
+
+        // If not table, get out
+        if(!$attachmentsTable.length) {
+            return;
+        }
+
+        // Create a Kbox modal
+        $attachmentsButton.bind("click", function(e) {
+            e.preventDefault();
+
+            if(attachmentsModalContent) {
+                $.modal(attachmentsModalContent, modalOptions);
+            }
+            else {
+                if(loading) {
+                    return;
+                }
+
+                loading = true;
+                $.get($attachmentsButton.attr("data-modal-url"), {}, function(attachmentsModalContent) {
+                    loading = false;
+                    $.modal(attachmentsModalContent, modalOptions);
+                });
+            }
+        });
+
+        // Updates the count at any given time
+        function updateAttachmentCount() {
+            var length = $attachmentsTable.find("tr").length;
+            $attachmentsCount.html();
+            if(length) {
+                $attachmentsTable.removeClass("hidden");
+                $attachmentsNoMessage.addClass("hidden");
+            }
+            else {
+                $attachmentsTable.addClass("hidden");
+                $attachmentsNoMessage.removeClass("hidden");
+            }
+        }
     }
 
     $(document).ready(init);

@@ -1551,3 +1551,9 @@ def edit_attachment(request, attachment_id):
     form = AttachmentRevisionForm()
     return jingo.render(request, 'wiki/edit_attachment.html',
                         {'form': form})
+    
+@require_GET
+def attachment_modal(request):
+    """ Simply returns modal content """
+
+    return jingo.render(request, 'wiki/attachment_modal.html')

@@ -86,6 +86,7 @@ textarea#id_content { width: 96%; padding: 15px; min-height: 300px; }
 
 /* page attachments */
 #page-attachments table  { margin: 20px 0 0 0; width: 100%; border: 1px solid #E0E0DC; border-bottom:0; border-right:0; border-collapse: collapse; }
+#page-attachments .hidden { display:none; }
 #page-attachments th, #page-attachments td { padding: 5px; border-bottom: 1px solid #E0E0DC; border-right: 1px solid #E0E0DC; }
 #page-attachments th { font-weight:bold; color: #666; }
 #page-attachments td { font-size: .9em; }
@@ -311,7 +312,7 @@ input#id_title { font-size: 1.857em; width: 80%; padding: .1em 6px; margin: 0 0 
 .page-meta section { position: relative; overflow: hidden; background: #f5f5f1; padding: 15px 20px; margin: 0 0 20px; }
 .page-meta h2 { margin: 0 20px 0 0; color: #666; font: 200 20px/1.1 "Bebas Neue", "League Gothic", Haettenschweiler, "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: .5px; }
 .page-meta p.add { width: 190px; position: absolute; right: 20px; top: 12px; text-align: right; margin: 0; }
-.page-meta p.add a, #deki-page-tags-toggleview { display: inline-block; padding: 8px 10px 6px 32px; background-color: #a5d9f3; color: #333; font: 200 15px/1 "Bebas Neue", "League Gothic", Haettenschweiler, "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: .5px; border: 0; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -moz-box-shadow: 1px 1px 0 rgba(0,0,0,.25); -webkit-box-shadow: 1px 1px 0 rgba(0,0,0,.25); box-shadow: 1px 1px 0 rgba(0,0,0,.25); }
+.page-meta p.add a, #deki-page-tags-toggleview { display: inline-block; padding: 8px 10px 6px 32px; background: #a5d9f3 url("../img/wiki/button-attach.png") 0 50% repeat-x; color: #333; font: 200 15px/1 "Bebas Neue", "League Gothic", Haettenschweiler, "Arial Narrow", sans-serif; text-transform: uppercase; letter-spacing: .5px; border: 0; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -moz-box-shadow: 1px 1px 0 rgba(0,0,0,.25); -webkit-box-shadow: 1px 1px 0 rgba(0,0,0,.25); box-shadow: 1px 1px 0 rgba(0,0,0,.25); }
 .page-meta p.add a:hover, .page-meta p.add a:focus, .page-meta p.add a:active { background-color: #ade4ff; text-decoration: none; }
 .page-meta p.none { display: inline; }
 .page-meta p.add a.disabled { opacity: .75; }

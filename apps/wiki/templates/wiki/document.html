@@ -194,7 +194,7 @@
               {% if attachments|length %}
                 <a href="#page-file">Files</a>
               {% else %}
-                <span title="{{ _('This document has no files') }}">Files</span>
+                <span title="{{ _('This document has no attachments') }}">Files</span>
               {% endif %}
             </li>
           </ul>
@@ -231,10 +231,15 @@
       </section>
       {% endif %}
 
-      {% if attachments | length %}
+      
         <section id="page-attachments">
-          <h2>{{ _('Attachments') }} ({{ attachments | length}})</h2>
-          <table cellpadding="0" cellspacing="0">
+          <h2>{{ _('Attachments') }} <span id="page-attachments-count">({{ attachments | length}})</span></h2>
+
+          <p class="add">
+            <a href="/" class="modal" id="page-attachments-button" data-modal-url="{{ url('wiki.attachment_modal') }}">Attach Files</a>
+          </p>
+
+          <table cellpadding="0" cellspacing="0" id="page-attachments-table" class="{% if not attachments|length %}hidden{% endif %}">
             <thead>
               <th>{{ _('File') }}</th>
               <th>{{ _('Size') }}</th>
@@ -259,8 +264,11 @@
               {% endfor %}
             </tbody>
           </table>
+          
+          <p id="page-attachments-no-message" class="{% if attachments|length %}hidden{% endif %}">
+            {{ _('This document has no attachments.') }}
+          </p>
         </section>
-      {% endif %}
 
 
       <section id="doc-contributors">

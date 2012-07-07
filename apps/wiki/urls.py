@@ -88,6 +88,9 @@ urlpatterns += patterns('wiki.views',
     url(r'^/preview-wiki-content$', 'preview_revision', name='wiki.preview'),
     
     url(r'^/get-documents$', 'autosuggest_documents', name='wiki.autosuggest_documents'),
+
+    # Attachments
+    url(r'^/attachment_modal$', 'attachment_modal', name='wiki.attachment_modal'),
     
     url(r'^/category/(?P<category>\d+)$', 'list_documents',
         name='wiki.category'),
