@@ -27,9 +27,7 @@
             initApproveReject();
         }
         if ($body.is('.document')){
-            initSyntaxHighlighter();
-            initAttachmentsActions();
-        }
+            initSyntaxHighlighter();        }
 
         if ($body.is('.home')) {
             initClearOddSections();
@@ -39,6 +37,7 @@
             initMetadataEditButton();
             initSaveAndEditButtons();
             initArticlePreview();
+            initAttachmentsActions();
         }
         if ($body.is('.edit.is-template') ||
                 $body.is('.new.is-template')) {
@@ -1064,26 +1063,60 @@
             $attachmentsNoMessage = $("#page-attachments-no-message"),
             $attachmentsNewTable = $("#page-attachments-new-table"),
             $attachmentsForm = $("#page-attachments-form"),
-            $attachmentsNewFile = $("#page-attachments-new-file"),
-            attachmentsModalContent = "",
-            loading = false;
+            $attachmentsNewTableActions = $attachmentsNewTable.find("tbody tr").last(),
+            $iframe = $("#page-attachments-upload-target"),
+            uploadFormTarget = $attachmentsForm.length && $attachmentsForm.attr("action"),
+            loading = running = false;
 
-        // If not table, get out
+        // If no attachments table, get out -- no permissions
         if(!$attachmentsTable.length) {
             return;
         }
 
-        // Add the CSRF ?
-        //$("#csrfmiddlewaretoken").clone().appendTo($attachmentsForm);
-
-        // Create a Kbox modal
+        // Upon click of the "Attach Files" button, toggle display of upload table
         $attachmentsButton.bind("click", function(e) {
             e.preventDefault();
             $attachmentsNewTable.toggleClass("hidden");
-            if($attachmentsNewTable.hasClass("hidden")) {
-                $attachmentsNewFile[0].focus();
+            if(!$attachmentsNewTable.hasClass("hidden")) {
+                $attachmentsNewTable.find("input[type=text]").first()[0].focus();
             }
         });
+
+        // Clicking the "AMF" button adds more rows
+        $("#page-attachments-more").bind("click", function() {
+            // Don't add boxes during submission
+            if(running) return;
+
+            $body = $attachmentsNewTable.find("tbody").first()
+            function clone() {
+                $clone = $body.find("tr").first().clone();
+                $clone.find("input, textarea").val("");
+                $clone.insertBefore($attachmentsNewTableActions);
+                return $clone;
+            }
+            var firstClone = clone();
+            clone();
+            clone();
+            firstClone.find('input[type="text"]')[0].focus();
+        });
+
+        // Submitting the form posts to mystical iframe
+        $iframe.bind("load", function(e) {
+            running = false;
+            $attachmentsForm[0].reset();
+
+            // Add validation here
+
+            console.warn("Uploads complete!");
+        });
+        $attachmentsForm.attr("target", "page-attachments-upload-target").bind("submit", function(e) {
+            $iframe.attr("src", uploadFormTarget);
+            // Stop concurrent submissions
+            if(running) return;
+            // Set the iframe target
+            running = true;
+        });
+
 
         // Updates the count at any given time
         function updateAttachmentCount() {

@@ -67,6 +67,8 @@ from wiki.tasks import send_reviewed_notification, schedule_rebuild_kb
 import wiki.content
 from wiki import kumascript
 
+from django.utils.safestring import mark_safe
+
 import logging
 
 log = logging.getLogger('k.wiki')
@@ -184,6 +186,26 @@ def _document_last_modified(request, document_slug, document_locale):
 
     except Document.DoesNotExist:
         return None
+
+def _format_attachment_obj(attachments):
+    attachments_list =[]
+    for attachment in attachments:
+        html = jingo.get_env().select_template(['wiki/includes/attachment_row.html'])
+        obj = {
+            'title': attachment.title,
+            #'date': datetimeformat(attachment.current_revision.created, format='datetime'), #FIX ME
+            'date': 'blah',
+            'description': attachment.current_revision.description,
+            'url': attachment.get_file_url(),
+            'size': attachment.current_revision.file.size,
+            'creator': attachment.current_revision.creator.username,
+            'creatorUrl': reverse('devmo.views.profile_view', args=[attachment.current_revision.creator])
+        }
+        obj['html'] = mark_safe(html.render({ 'attachment': obj }))
+        attachments_list.append(obj)
+
+    return attachments_list
+
 
 
 @waffle_flag('kumawiki')
@@ -385,13 +407,15 @@ def document(request, document_slug, document_locale):
     #     https://github.com/jsocol/kitsune/commit/
     #       f1ebb241e4b1d746f97686e65f49e478e28d89f2
 
+    attachments = _format_attachment_obj(doc.attachments)
     data = {'document': doc, 'document_html': doc_html, 'toc_html': toc_html,
             'redirected_from': redirected_from,
             'related': related, 'contributors': contributors,
             'fallback_reason': fallback_reason,
             'kumascript_errors': ks_errors,
             'render_raw_fallback': render_raw_fallback,
-            'attachment_form': AttachmentRevisionForm()}
+            'attachment_data': attachments,
+            'attachment_data_json': json.dumps(attachments)}
     data.update(SHOWFOR_DATA)
 
     response = jingo.render(request, 'wiki/document.html', data)
@@ -762,7 +786,8 @@ def edit_document(request, document_slug, document_locale, revision_id=None):
                          'parent_slug': '/'.join(slug_split),
                          'parent_path': parent_path,
                          'revision': rev,
-                         'document': doc})
+                         'document': doc,
+                         'attachment_form': AttachmentRevisionForm()})
 
 
 def _edit_document_collision(request, orig_rev, curr_rev, is_iframe_target,
@@ -1520,9 +1545,6 @@ def attachment_history(request, attachment_id):
 
 @login_required
 def new_attachment(request):
-
-    logging.debug('Hit!')
-
     """Create a new Attachment object and populate its initial
     revision."""
     if request.method == 'POST':
@@ -1558,9 +1580,3 @@ def edit_attachment(request, attachment_id):
     form = AttachmentRevisionForm()
     return jingo.render(request, 'wiki/edit_attachment.html',
                         {'form': form})
-    
-@require_GET
-def attachment_modal(request):
-    """ Simply returns modal content """
-
-    return jingo.render(request, 'wiki/attachment_modal.html')

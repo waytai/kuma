@@ -231,55 +231,7 @@
       </section>
       {% endif %}
 
-      
-        <section id="page-attachments">
-          <h2>{{ _('Attachments') }} <span id="page-attachments-count">({{ attachments | length}})</span></h2>
-
-          <p class="add">
-            <a href="/" class="modal" id="page-attachments-button" data-modal-url="{{ url('wiki.attachment_modal') }}">Attach Files</a>
-          </p>
-
-          <p id="page-attachments-no-message" class="{% if attachments|length %}hidden{% endif %}">
-            {{ _('This document has no attachments.') }}
-          </p>
-          <table cellpadding="0" cellspacing="0" id="page-attachments-table" class="{% if not attachments|length %}hidden{% endif %}">
-            <thead>
-              <th>{{ _('File') }}</th>
-              <th>{{ _('Size') }}</th>
-              <th>{{ _('Date') }}</th>
-              <th>{{ _('Attached by') }}</th>
-              <!-- <th>&nbsp;</th>  actions will go here -->
-            </thead>
-            <tbody>
-              {% for attachment in attachments %}
-                <tr>
-                  <td class="attachment-name-cell">
-                    <a href="{{ attachment.get_file_url() }}" title="{{ attachment.get_file_url() }}" target="_blank">{{ attachment.title | safe }}</a>
-                    {% if attachment.current_revision.description %}
-                      <div class="attachment-description">{{ attachment.current_revision.description }}</div>
-                    {% endif %}
-                  </td>
-                  <td>{{ attachment.current_revision.file.size }} bytes</td>
-                  <td>{{ datetimeformat(attachment.current_revision.created, format='datetime') }}</td>
-                  <td><a href="{{ url('devmo.views.profile_view', username=attachment.current_revision.creator) }}">{{ attachment.current_revision.creator }}</a></td>
-                  <!--<td>&nbsp;</td> actions will go here -->
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-
-          <form method="post" action="{{ url('wiki.new_attachment') }}" id="page-attachments-form" enctype="multipart/form-data">
-          <table cellpadding="0" cellspacing="0" id="page-attachments-new-table" class="hidden">
-            <tbody>
-              <td>{{ attachment_form.file | safe }}</td>
-              <td>{{ attachment_form.title | safe }}</td>
-              <td>{{ attachment_form.description | safe }}</td>
-              <td>{{ attachment_form.comment | safe }}</td>
-              <td><input type="submit" name="submit" value="Upload" /></td>
-            </tbody>
-          </table>
-        </section>
-
+      {% include 'wiki/includes/attachment_list.html' %}
 
       <section id="doc-contributors">
         {% trans contributors=user_list(contributors) %}
