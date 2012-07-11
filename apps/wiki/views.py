@@ -199,7 +199,9 @@ def _format_attachment_obj(attachments):
             'url': attachment.get_file_url(),
             'size': attachment.current_revision.file.size,
             'creator': attachment.current_revision.creator.username,
-            'creatorUrl': reverse('devmo.views.profile_view', args=[attachment.current_revision.creator])
+            'creatorUrl': reverse('devmo.views.profile_view', args=[attachment.current_revision.creator]),
+            'revision': attachment.current_revision.id,
+            'id': attachment.id
         }
         obj['html'] = mark_safe(html.render({ 'attachment': obj }))
         attachments_list.append(obj)

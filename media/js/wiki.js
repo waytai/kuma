@@ -1115,9 +1115,18 @@
                     result = JSON.parse($.trim($textarea.val()));
                     // Add the row to the table
                     $.each(result, function() {
+                        // Add to uploads table
                         $(this.html).appendTo($attachmentsTable);
+                        // Update attachment count
                         $attachmentsCount.text(parseInt($attachmentsCount.text(), 10) + 1);
+                        // Add item to list
+                        if(window.MDN_ATTACHMENTS) {
+                            window.MDN_ATTACHMENTS.push(this);
+                        }
                     });
+                    // Hide the "no rows" paragraph, show table
+                    $attachmentsNoMessage.addClass("hidden");
+                    $attachmentsTable.removeClass("hidden");
                 }
                 else {
                     // Show error message?
@@ -1128,7 +1137,7 @@
                 // Show error message? 
                 console.warn("Exception! ", e);
             }
-            $pageAttachmentsSpinner.fadeOut();
+            $pageAttachmentsSpinner.css("opacity", 0);
         });
 
         // Form submission, upload, and response handling
@@ -1139,7 +1148,7 @@
             // Set the iframe target
             $iframe.attr("src", $attachmentsForm.attr("action"));
             // Show the spinner
-            $pageAttachmentsSpinner.fadeIn();
+            $pageAttachmentsSpinner.css("opacity", 1);
         });
     
         // Updates the count at any given time

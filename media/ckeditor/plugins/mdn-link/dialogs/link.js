@@ -412,7 +412,32 @@ CKEDITOR.dialog.add( 'link', function( editor )
 			dialog.hide();
 		}
 	}
-		
+
+	// Update the select array
+	var attachmentsDropdown;
+	function updateAttachments(select) {
+		var attachmentsArray = [],
+			mdnArray = window.MDN_ATTACHMENTS;
+
+		// Save the select element
+		if(select) {
+			attachmentsDropdown = select;
+		}
+		else if(!attachmentsDropdown) {
+			return;
+		}
+
+		// Clear the select
+		attachmentsDropdown.clear();
+		if(mdnArray && mdnArray.length) {
+			jQuery.each(mdnArray, function() {
+				attachmentsDropdown.add(this.title, this.url);
+			});
+		}
+		else {
+			attachmentsDropdown.add(gettext('No attachments available'), '');
+		}
+	}	
 		
 	return {
 		title : linkLang.title,
@@ -455,7 +480,7 @@ CKEDITOR.dialog.add( 'link', function( editor )
 							{
 								id: 'articleName',
 								type: 'text',
-								label: gettext('Article Title'),
+								label: gettext('Article Title Lookup'),
 								setup: function() {
 									// This happens upon every open, so need to make sure we don't keep creating new autocompleters!
 									var dialog = this.getDialog(),
@@ -500,6 +525,21 @@ CKEDITOR.dialog.add( 'link', function( editor )
 									// Clear out the the values so there aren't any problems
 									jQuery(autoCompleteTextbox).mozillaAutocomplete('clear');
 								}
+							},
+							{
+								type : 'vbox',
+								id: 'attachment',
+								children: [{
+									type: 'select',
+									label: gettext('Attachments'),
+									items: [],
+									onChange: function() {
+										this.getDialog().setValueOf('info', 'url', this.getValue());
+									},
+									setup: function(data) {
+										updateAttachments(this);
+									}
+								}]
 							},
 							{
 								type : 'hbox',
@@ -992,6 +1032,9 @@ CKEDITOR.dialog.add( 'link', function( editor )
 				selection = editor.getSelection(),
 				element = null;
 
+			// Update the dropdown
+			updateAttachments();
+
 			// Fill in all the relevant fields if there's already one link selected.
 			if ( ( element = plugin.getSelectedLink( editor ) ) && element.hasAttribute( 'href' ) )
 				selection.selectElement( element );
@@ -999,6 +1042,9 @@ CKEDITOR.dialog.add( 'link', function( editor )
 				element = null;
 
 			this.setupContent( parseLink.apply( this, [ editor, element ] ) );
+
+			// Update the attachments list
+
 			
 			// If there's an element, don't take action, let the editor handle it
 			this.hasSourceElement = !(element == null);
