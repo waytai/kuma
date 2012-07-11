@@ -1064,9 +1064,10 @@
             $attachmentsNewTable = $("#page-attachments-new-table"),
             $attachmentsForm = $("#page-attachments-form"),
             $attachmentsNewTableActions = $attachmentsNewTable.find("tbody tr").last(),
+            $pageAttachmentsSpinner = $("#page-attachments-spinner"),
             $iframe = $("#page-attachments-upload-target"),
             uploadFormTarget = $attachmentsForm.length && $attachmentsForm.attr("action"),
-            loading = running = false;
+            running = false;
 
         // If no attachments table, get out -- no permissions
         if(!$attachmentsTable.length) {
@@ -1086,7 +1087,6 @@
         $("#page-attachments-more").bind("click", function() {
             // Don't add boxes during submission
             if(running) return;
-
             $body = $attachmentsNewTable.find("tbody").first()
             function clone() {
                 $clone = $body.find("tr").first().clone();
@@ -1095,29 +1095,53 @@
                 return $clone;
             }
             var firstClone = clone();
-            clone();
-            clone();
             firstClone.find('input[type="text"]')[0].focus();
         });
+
+        // Add an "ajax" parameter to the form for the sake of the server
+        $("<input type='hidden' name='is_ajax' value='1' />").appendTo($attachmentsForm);
 
         // Submitting the form posts to mystical iframe
         $iframe.bind("load", function(e) {
             running = false;
             $attachmentsForm[0].reset();
 
-            // Add validation here
-
-            console.warn("Uploads complete!");
+            // Handle results
+            try {
+                var $textarea = $iframe.contents().find("textarea").first(),
+                    result;
+                if($textarea.length) {
+                    // Get JSON
+                    result = JSON.parse($.trim($textarea.val()));
+                    // Add the row to the table
+                    $.each(result, function() {
+                        $(this.html).appendTo($attachmentsTable);
+                        $attachmentsCount.text(parseInt($attachmentsCount.text(), 10) + 1);
+                    });
+                }
+                else {
+                    // Show error message?
+                    console.warn("No textarea")
+                }
+            }
+            catch(e) {
+                // Show error message? 
+                console.warn("Exception! ", e);
+            }
+            $pageAttachmentsSpinner.fadeOut();
         });
+
+        // Form submission, upload, and response handling
         $attachmentsForm.attr("target", "page-attachments-upload-target").bind("submit", function(e) {
-            $iframe.attr("src", uploadFormTarget);
             // Stop concurrent submissions
             if(running) return;
-            // Set the iframe target
             running = true;
+            // Set the iframe target
+            $iframe.attr("src", $attachmentsForm.attr("action"));
+            // Show the spinner
+            $pageAttachmentsSpinner.fadeIn();
         });
-
-
+    
         // Updates the count at any given time
         function updateAttachmentCount() {
             var length = $attachmentsTable.find("tr").length;

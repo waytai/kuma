@@ -778,6 +778,8 @@ def edit_document(request, document_slug, document_locale, revision_id=None):
         parent_doc = Document.objects.get(pk=doc.parent_topic_id)
         parent_path = request.build_absolute_uri(parent_doc.get_absolute_url())
 
+
+    attachments = _format_attachment_obj(doc.attachments)
     return jingo.render(request, 'wiki/edit_document.html',
                         {'revision_form': rev_form,
                          'document_form': doc_form,
@@ -787,7 +789,9 @@ def edit_document(request, document_slug, document_locale, revision_id=None):
                          'parent_path': parent_path,
                          'revision': rev,
                          'document': doc,
-                         'attachment_form': AttachmentRevisionForm()})
+                         'attachment_form': AttachmentRevisionForm(),
+                         'attachment_data': attachments,
+                         'attachment_data_json': json.dumps(attachments)})
 
 
 def _edit_document_collision(request, orig_rev, curr_rev, is_iframe_target,
@@ -1556,13 +1560,19 @@ def new_attachment(request):
                                                    slug=rev.slug)
             rev.attachment = attachment
             rev.save()
-            return HttpResponseRedirect(attachment.get_absolute_url())
-        else:
-            logging.debug('Invalid form!')
+
+            if request.POST.get('is_ajax', ''):
+                response = jingo.render(request, 'wiki/includes/attachment_upload_results.html',
+                        { 'result': json.dumps(_format_attachment_obj([attachment])) })
+            else:
+                return HttpResponseRedirect(attachment.get_absolute_url())
     else:
         form = AttachmentRevisionForm()
-    return jingo.render(request, 'wiki/new_attachment.html',
-                        {'form': form})
+        response = jingo.render(request, 'wiki/new_attachment.html',
+                            {'form': form})
+
+    response['x-frame-options'] = 'SAMEORIGIN'
+    return response
 
 
 @login_required

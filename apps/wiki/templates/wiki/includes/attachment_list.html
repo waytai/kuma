@@ -1,7 +1,7 @@
 {% set show_attach_button = 1 %}<!-- DELETE ME -->
 
 <section id="page-attachments">
-  <h2>{{ _('Attachments') }} <span id="page-attachments-count">({{ attachments | length}})</span></h2>
+  <h2>{{ _('Attachments') }} (<span id="page-attachments-count">{{ attachment_data | length}}</span>)</h2>
 
   {% if show_attach_button and attachment_form %}
   <p class="add">
@@ -9,17 +9,15 @@
   </p>
   {% endif %}
 
-  <p id="page-attachments-no-message" class="{% if attachments|length %}hidden{% endif %}">
+  <p id="page-attachments-no-message" class="{% if attachment_data|length %}hidden{% endif %}">
     {{ _('This document has no attachments.') }}
   </p>
 
   <script>
     // This is a global, but has to be :/
-    MDN_ATTACHMENTS = {
-      attachments: {{ attachment_data_json | safe }}
-    };
+    MDN_ATTACHMENTS = {{ attachment_data_json | safe }};
   </script>
-  <table cellpadding="0" cellspacing="0" id="page-attachments-table" class="{% if not attachments|length %}hidden{% endif %}">
+  <table cellpadding="0" cellspacing="0" id="page-attachments-table" class="{% if not attachment_data|length %}hidden{% endif %}">
     <thead>
       <th>{{ _('File') }}</th>
       <th>{{ _('Size') }}</th>
@@ -53,10 +51,12 @@
         <td colspan="4">
           <input type="submit" name="submit" value="Upload" />
           <input type="button" name="attachMore" id="page-attachments-more" value="Attach More Files" />
+          <img src="/media/img/wiki/upload-spinner.gif" id="page-attachments-spinner" alt="Uploading" />
         </td>
       </tr>
     </tbody>
   </table>
   <iframe id="page-attachments-upload-target" name="page-attachments-upload-target"></iframe>
+  </form>
   {% endif %}
 </section>
