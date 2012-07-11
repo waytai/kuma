@@ -201,7 +201,8 @@ def _format_attachment_obj(attachments):
             'creator': attachment.current_revision.creator.username,
             'creatorUrl': reverse('devmo.views.profile_view', args=[attachment.current_revision.creator]),
             'revision': attachment.current_revision.id,
-            'id': attachment.id
+            'id': attachment.id,
+            'mime': attachment.current_revision.mime_type
         }
         obj['html'] = mark_safe(html.render({ 'attachment': obj }))
         attachments_list.append(obj)
@@ -1572,7 +1573,7 @@ def new_attachment(request):
         form = AttachmentRevisionForm()
         response = jingo.render(request, 'wiki/new_attachment.html',
                             {'form': form})
-
+        
     response['x-frame-options'] = 'SAMEORIGIN'
     return response
 

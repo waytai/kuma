@@ -11,7 +11,8 @@ CKEDITOR.dialog.add( 'link', function( editor )
 	var autoCompleteCreated = false,
 		autoCompleteUrl = jQuery('#autosuggestTitleUrl').attr('data-url'),
 		autoCompleteTextbox,
-		autoCompleteSelection;
+		autoCompleteSelection,
+		attachmentsSelect;
 	
 	// Handles the event when the "Target" selection box is changed.
 	var targetChanged = function()
@@ -412,32 +413,6 @@ CKEDITOR.dialog.add( 'link', function( editor )
 			dialog.hide();
 		}
 	}
-
-	// Update the select array
-	var attachmentsDropdown;
-	function updateAttachments(select) {
-		var attachmentsArray = [],
-			mdnArray = window.MDN_ATTACHMENTS;
-
-		// Save the select element
-		if(select) {
-			attachmentsDropdown = select;
-		}
-		else if(!attachmentsDropdown) {
-			return;
-		}
-
-		// Clear the select
-		attachmentsDropdown.clear();
-		if(mdnArray && mdnArray.length) {
-			jQuery.each(mdnArray, function() {
-				attachmentsDropdown.add(this.title, this.url);
-			});
-		}
-		else {
-			attachmentsDropdown.add(gettext('No attachments available'), '');
-		}
-	}	
 		
 	return {
 		title : linkLang.title,
@@ -537,7 +512,8 @@ CKEDITOR.dialog.add( 'link', function( editor )
 										this.getDialog().setValueOf('info', 'url', this.getValue());
 									},
 									setup: function(data) {
-										updateAttachments(this);
+										attachmentsSelect = this;
+										CKEDITOR.mdn.updateAttachments(this);
 									}
 								}]
 							},
@@ -1033,7 +1009,7 @@ CKEDITOR.dialog.add( 'link', function( editor )
 				element = null;
 
 			// Update the dropdown
-			updateAttachments();
+			CKEDITOR.mdn.updateAttachments(attachmentsSelect);
 
 			// Fill in all the relevant fields if there's already one link selected.
 			if ( ( element = plugin.getSelectedLink( editor ) ) && element.hasAttribute( 'href' ) )
