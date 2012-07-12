@@ -3,7 +3,7 @@
     <a href="{{ attachment.url }}" target="_blank">{{ attachment.title | safe }}</a>
       <div class="attachment-description">{{ attachment.description }}</div>
   </td>
-  <td>{{ attachment.size }} bytes</td>
+  <td>{{ _('{s} bytes')|f(s=attachment.size) }}</td>
   <td>{{ attachment.date }}</td>
   <td><a href="{{ attachment.creatorUrl }}">{{ attachment.creator }}</a></td>
 </tr>

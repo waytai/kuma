@@ -1537,7 +1537,8 @@ def attachment_detail(request, attachment_id):
     """Detail view of an attachment."""
     attachment = get_object_or_404(Attachment, pk=attachment_id)
     return jingo.render(request, 'wiki/attachment_detail.html',
-                        {'attachment': attachment})
+                        {'attachment': attachment,
+                         'revision': attachment.current_revision})
 
 
 def attachment_history(request, attachment_id):
@@ -1548,7 +1549,8 @@ def attachment_history(request, attachment_id):
     # to be current.
     attachment = get_object_or_404(Attachment, pk=attachment_id)
     return jingo.render(request, 'wiki/attachment_history.html',
-                        {'attachment': attachment})
+                        {'attachment': attachment,
+                         'revision': attachment.current_revision})
 
 @login_required
 def new_attachment(request):
