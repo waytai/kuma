@@ -193,8 +193,7 @@ def _format_attachment_obj(attachments):
         html = jingo.get_env().select_template(['wiki/includes/attachment_row.html'])
         obj = {
             'title': attachment.title,
-            #'date': datetimeformat(attachment.current_revision.created, format='datetime'), #FIX ME
-            'date': 'blah',
+            'date': str(attachment.current_revision.created),
             'description': attachment.current_revision.description,
             'url': attachment.get_file_url(),
             'size': attachment.current_revision.file.size,
