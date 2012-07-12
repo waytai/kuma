@@ -1089,9 +1089,15 @@
             if(running) return;
             $body = $attachmentsNewTable.find("tbody").first()
             function clone() {
+                // Create and insert clone
                 $clone = $body.find("tr").first().clone();
                 $clone.find("input, textarea").val("");
                 $clone.insertBefore($attachmentsNewTableActions);
+
+                // Show the cell actions now!
+                $attachmentsNewTable.find(".page-attachment-actions-cell").removeClass("hidden");
+                $clone.find(".delete-attachment").removeClass("hidden");
+
                 return $clone;
             }
             var firstClone = clone();
@@ -1147,6 +1153,8 @@
             running = true;
             // Set the iframe target
             $iframe.attr("src", $attachmentsForm.attr("action"));
+            // Validate we something usable; i.e. remove fields with absolutely no data
+            var $rows = $attachmentsNewTable.find("tbody tr");
             // Show the spinner
             $pageAttachmentsSpinner.css("opacity", 1);
         });
