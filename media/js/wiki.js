@@ -1131,7 +1131,9 @@
                         // If valid....
                         if(this.id) {
                             // Add to uploads table
-                            $(this.html).appendTo($attachmentsTable);
+                            var $newTr = $(this.html);
+                            $newTr.appendTo($attachmentsTable);
+                            $newTr.addClass("new-row");
                             // Update attachment count
                             $attachmentsCount.text(parseInt($attachmentsCount.text(), 10) + 1);
                             // Add item to list
@@ -1217,20 +1219,6 @@
             // Show the spinner
             $pageAttachmentsSpinner.css("opacity", 1);
         });
-    
-        // Updates the count at any given time
-        function updateAttachmentCount() {
-            var length = $attachmentsTable.find("tr").length;
-            $attachmentsCount.html();
-            if(length) {
-                $attachmentsTable.removeClass("hidden");
-                $attachmentsNoMessage.addClass("hidden");
-            }
-            else {
-                $attachmentsTable.addClass("hidden");
-                $attachmentsNoMessage.removeClass("hidden");
-            }
-        }
     }
 
     $(document).ready(init);
