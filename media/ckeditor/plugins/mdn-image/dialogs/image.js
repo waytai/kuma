@@ -580,8 +580,6 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 											},
 											setup : function( type, element )
 											{
-												console.warn("SETUP");
-
 												if ( type == IMAGE )
 												{
 													var url = element.data( 'cke-saved-src' ) || element.getAttribute( 'src' );

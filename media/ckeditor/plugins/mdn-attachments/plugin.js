@@ -15,6 +15,7 @@ CKEDITOR.plugins.add('mdn-attachments', {
 				if(mdnArray) {
 					jQuery.each(mdnArray, function() {
 						if(!filter || filter(this)) {
+							attachmentsArray.push(this);
 							select.add(this.title, this.url);
 						}
 					});
@@ -22,6 +23,9 @@ CKEDITOR.plugins.add('mdn-attachments', {
 
 				if(!attachmentsArray.length) {
 					select.add(gettext('No attachments available'), '');
+				}
+				else {
+					select.add(gettext('Select an attachment'), '', 0);
 				}
 			}
 
