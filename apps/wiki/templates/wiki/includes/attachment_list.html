@@ -15,7 +15,7 @@
 
   <script>
     // This is a global, but has to be :/
-    MDN_ATTACHMENTS = {{ attachment_data_json | safe }};
+    MDN_ATTACHMENTS = {{ (attachment_data_json | safe) or '[]' }};
   </script>
   <table cellpadding="0" cellspacing="0" id="page-attachments-table" class="{% if not attachment_data|length %}hidden{% endif %}">
     <thead>
@@ -44,7 +44,7 @@
     <tbody>
       <tr>
         <td class="hidden page-attachment-actions-cell"><a href="javascript:;" class="hidden delete-attachment">Delete</a></td>
-        <td>{{ attachment_form.file | safe }}</td>
+        <td class="page-attachment-actions-file-cell">{{ attachment_form.file | safe }}</td>
         <td>{{ attachment_form.title | safe }}</td>
         <td>{{ attachment_form.description | safe }}</td>
         <td>{{ attachment_form.comment | safe }}</td>
@@ -52,7 +52,7 @@
       <tr>
         <td colspan="4">
           <input type="submit" name="submit" value="Upload" />
-          <input type="button" name="attachMore" id="page-attachments-more" value="Attach More Files" />
+          {# <input type="button" name="attachMore" id="page-attachments-more" value="Attach More Files" /> #}
           <img src="/media/img/wiki/upload-spinner.gif" id="page-attachments-spinner" alt="Uploading" />
         </td>
       </tr>

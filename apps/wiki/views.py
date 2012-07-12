@@ -206,7 +206,6 @@ def _format_attachment_obj(attachments):
         }
         obj['html'] = mark_safe(html.render({ 'attachment': obj }))
         attachments_list.append(obj)
-
     return attachments_list
 
 
@@ -535,6 +534,7 @@ def new_document(request):
                              'parent_id': initial_parent_id,
                              'document_form': doc_form,
                              'revision_form': rev_form,
+                             'attachment_form': AttachmentRevisionForm(),
                              'parent_path': parent_path})
 
     post_data = request.POST.copy()
@@ -573,6 +573,7 @@ def new_document(request):
                         {'is_template': is_template,
                          'document_form': doc_form,
                          'revision_form': rev_form,
+                         'attachment_form': AttachmentRevisionForm(),
                          'parent_slug': parent_slug,
                          'parent_path': parent_path})
 
@@ -1554,6 +1555,7 @@ def attachment_history(request, attachment_id):
 def new_attachment(request):
     """Create a new Attachment object and populate its initial
     revision."""
+    
     if request.method == 'POST':
         form = AttachmentRevisionForm(data=request.POST, files=request.FILES)
         if form.is_valid():
@@ -1569,6 +1571,14 @@ def new_attachment(request):
                         { 'result': json.dumps(_format_attachment_obj([attachment])) })
             else:
                 return HttpResponseRedirect(attachment.get_absolute_url())
+        else:
+            if request.POST.get('is_ajax', ''):
+                error_obj = {
+                    'title': request.POST.get('is_ajax', ''),
+                    'error': _(u'The file provided is not valid')
+                }
+                response = jingo.render(request, 'wiki/includes/attachment_upload_results.html',
+                        { 'result': json.dumps([error_obj]) })
     else:
         form = AttachmentRevisionForm()
         response = jingo.render(request, 'wiki/new_attachment.html',
