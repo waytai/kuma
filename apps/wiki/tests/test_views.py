@@ -916,6 +916,45 @@ class DocumentEditingTests(TestCaseBase):
                                       locale=locale))
         eq_(302, response.status_code)
     
+    def test_create_on_404_non_english(self):
+        client = LocalizingClient()
+        client.login(username='testuser', password='testpass')
+
+        # Create the parent page.
+        locale = 'fr'
+        slug = u'JavaScript/Référence_JavaScript/Objets_globaux'
+        d = document(title='Non-English create-on-404',
+                     slug=slug,
+                     locale=locale)
+        d.save()
+
+        r = revision(document=d,
+                     content='Test that nonexistent pages redirect to creation.')
+        r.save()
+
+        saved_d = Document.objects.get(slug=slug, locale=locale)
+
+        doc_url = reverse('wiki.document', args=[slug], locale=locale)
+        resp = client.get(doc_url)
+        eq_(200, resp.status_code)
+        
+        # Establish attribs of child page.
+        local_slug = 'Iterator'
+        slug = '%s/%s' % (d.slug, local_slug)
+        url = reverse('wiki.document', args=[slug], locale=locale)
+
+        # Ensure redirect to create new page on attempt to visit non-existent
+        # child page.
+        resp = client.get(url)
+        eq_(302, resp.status_code)
+        ok_('docs/new' in resp['Location'])
+        ok_('?slug=%s' % local_slug  in resp['Location'])
+
+        # Ensure root level documents work, not just children
+        response = client.get(reverse('wiki.document',
+                                      args=['noExist'], locale=locale))
+        eq_(302, response.status_code)
+
     def test_new_document_comment(self):
         """ Creating a new document with a revision comment saves the comment """
         client = LocalizingClient()
